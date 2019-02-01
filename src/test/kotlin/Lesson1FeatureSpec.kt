@@ -4,6 +4,7 @@ import io.kotlintest.shouldBe
 import io.kotlintest.shouldNot
 import io.kotlintest.shouldNotBe
 import io.kotlintest.specs.FeatureSpec
+import kotlin.math.min
 
 class BasicsFeatureSpec : FeatureSpec({
     feature("functions") {
@@ -58,6 +59,7 @@ class BasicsFeatureSpec : FeatureSpec({
     feature("conditional expressions") {
         val max = 100
         val min = 0
+        val list = listOf(1 ,3, 4, 5, -1)
 
         scenario("returns max") {
             maxOf(min, max) shouldBe max
@@ -74,6 +76,9 @@ class BasicsFeatureSpec : FeatureSpec({
         }
         scenario("return min of 5") {
             minOf5(1.0, 2.0, 3.0, 4.0, 5.0) shouldBe 1.0
+        }
+        scenario("minoff with collection") {
+            minOfList(list) shouldBe -1
         }
     }
 
@@ -138,7 +143,15 @@ fun minOf5(z: Double, x: Double, s: Double, d: Double, v: Double): Double {
     return minOf(minOf(minOf(z, x), minOf(s,d)), v)
 }
 
-
+fun minOfList(list:List<Int>): Int {
+    var mini = list[0]
+    for (i in list){
+        if (i < mini) {
+            mini = i
+        }
+    }
+    return mini
+}
 
 
 fun describe(obj: Any): String =
