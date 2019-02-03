@@ -1,9 +1,22 @@
+import com.sun.corba.se.pept.transport.ContactInfo
+import com.sun.corba.se.pept.transport.ContactInfoListIterator
+import io.kotlintest.*
+import io.kotlintest.matchers.collections.haveElementAt
+import io.kotlintest.matchers.collections.haveUpperBound
 import io.kotlintest.matchers.collections.shouldContain
+import io.kotlintest.matchers.haveKey
+import io.kotlintest.matchers.haveLength
+import io.kotlintest.matchers.haveSize
+import io.kotlintest.matchers.haveValue
+import io.kotlintest.matchers.maps.shouldContainValue
+import io.kotlintest.matchers.maps.shouldNotContain
+import io.kotlintest.matchers.maps.shouldNotContainKey
 import io.kotlintest.matchers.numerics.*
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldNot
-import io.kotlintest.shouldNotBe
+import io.kotlintest.matchers.sequences.haveCount
+import io.kotlintest.matchers.string.shouldHaveLineCount
+import io.kotlintest.matchers.string.shouldNotBeEmpty
 import io.kotlintest.specs.FeatureSpec
+import org.apache.commons.lang3.ObjectUtils
 import kotlin.math.min
 
 class BasicsFeatureSpec : FeatureSpec({
@@ -53,6 +66,57 @@ class BasicsFeatureSpec : FeatureSpec({
 
         scenario("is not empty") {
             together.isNotBlank() shouldBe true
+        }
+    }
+
+
+    feature ("Test of list with map"){
+        val list2: List<String> = listOf("Apple", "Orange", "Grapes", "Apple", "Orange", "Apple", "", "", "Cherry", "Watermelon", "Grapes", "Peach")
+
+        scenario("print result") {
+            println("Home work 2\n Количество фруктов в магазине:\n" + listToMap(list2))
+
+        }
+        scenario("Have key Apple"){
+            listToMap(list2) shouldHave (haveKey("Apple"))
+            println(" Scenario #1: Map have key = Apple")
+        }
+
+        scenario("Have value"){
+            listToMap(list2) shouldBe (haveValue(3))
+            println(" Scenario #2: Have value = 3")
+
+        }
+
+        scenario("Should not be boolean"){
+            listToMap(list2) shouldNotBe Boolean
+            println(" Scenario #3: Map should not be boolean")
+
+        }
+        scenario("No banana in map"){
+            listToMap(list2) shouldNot (haveKey("Banana"))
+            println(" Scenario #4: No banana in map")
+
+        }
+        scenario("Contains orange true"){
+            listToMap(list2).containsKey("Orange") shouldBe true
+            println(" Scenario #5: Map contains orange")
+
+        }
+        scenario("Not Empty"){
+            listToMap(list2).isEmpty() shouldBe false
+            println(" Scenario #6: Not Empty")
+
+        }
+        scenario("contain value 3"){
+            listToMap(list2).shouldContainValue(3)
+            println(" Scenario #7: contain value 3")
+
+        }
+        scenario("not contain Potato = 5") {
+            listToMap(list2).shouldNotContain("Potato", 5)
+            println(" Scenario #8: not contain Potato = 5")
+
         }
     }
 
@@ -142,7 +206,7 @@ fun minOf4(q: Double, w: Double, e: Double, r: Double): Double {
 fun minOf5(z: Double, x: Double, s: Double, d: Double, v: Double): Double {
     return minOf(minOf(minOf(z, x), minOf(s,d)), v)
 }
-
+//Home work 1
 fun minOfList(list:List<Int>): Int {
     var mini = list[0]
     for (i in list){
@@ -153,6 +217,12 @@ fun minOfList(list:List<Int>): Int {
     return mini
 }
 
+//Home work 2
+fun listToMap(fruits: List<String>): Map<String, Int> {
+    val countOfFruits: Map<String, Int> = fruits.groupingBy { it}.eachCount().filter { it.value >=1 }.filterKeys { it.isNotBlank() }
+
+    return countOfFruits
+}
 
 fun describe(obj: Any): String =
         when (obj) {
