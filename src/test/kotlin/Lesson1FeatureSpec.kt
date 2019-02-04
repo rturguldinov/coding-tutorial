@@ -219,9 +219,7 @@ fun minOfList(list:List<Int>): Int {
 
 //Home work 2
 fun listToMap(fruits: List<String>): Map<String, Int> {
-    val countOfFruits: Map<String, Int> = fruits.groupingBy { it}.eachCount().filter { it.value >=1 }.filterKeys { it.isNotBlank() }
-
-    return countOfFruits
+    return fruits.groupingBy{it}.eachCount().filterKeys{it.isNotBlank() }
 }
 
 fun describe(obj: Any): String =
