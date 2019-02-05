@@ -231,13 +231,11 @@ fun listToMap(fruits: List<String>): Map<String, Int> {
 fun listToMap1(fruits: List<String>): Map<String, Int> {
     val anotherMap = mutableMapOf<String, Int>()
     for (i in fruits) {
+        if (i == "") continue
+
         if (anotherMap.contains(i)){  //anotherMap.containsKey(i)
             anotherMap[i] = anotherMap.getValue(i) + 1
-            if (anotherMap.containsKey("")){
-                anotherMap.remove(i)
-            }
         }
-
         else anotherMap[i] = 1
     }
     return anotherMap
