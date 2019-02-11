@@ -1,24 +1,25 @@
-import com.sun.corba.se.pept.transport.ContactInfo
-import com.sun.corba.se.pept.transport.ContactInfoListIterator
+import com.sun.istack.internal.Nullable
+import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException
 import io.kotlintest.*
-import io.kotlintest.matchers.collections.haveElementAt
-import io.kotlintest.matchers.collections.haveUpperBound
+import io.kotlintest.matchers.collections.containNull
 import io.kotlintest.matchers.collections.shouldContain
+import io.kotlintest.matchers.file.beExecutable
 import io.kotlintest.matchers.haveKey
-import io.kotlintest.matchers.haveLength
-import io.kotlintest.matchers.haveSize
 import io.kotlintest.matchers.haveValue
 import io.kotlintest.matchers.maps.shouldContainValue
 import io.kotlintest.matchers.maps.shouldNotContain
-import io.kotlintest.matchers.maps.shouldNotContainKey
-import io.kotlintest.matchers.numerics.*
-import io.kotlintest.matchers.sequences.haveCount
-import io.kotlintest.matchers.string.shouldHaveLineCount
-import io.kotlintest.matchers.string.shouldNotBeEmpty
+import io.kotlintest.matchers.numerics.shouldBeGreaterThanOrEqual
+import io.kotlintest.matchers.numerics.shouldBeInRange
+import io.kotlintest.matchers.numerics.shouldBeLessThan
+import io.kotlintest.matchers.numerics.shouldNotBeGreaterThan
+import io.kotlintest.matchers.types.shouldBeTypeOf
+import io.kotlintest.matchers.types.shouldNotBeTypeOf
+import io.kotlintest.properties.propertyTestFailureMessage
 import io.kotlintest.specs.FeatureSpec
-import org.apache.commons.lang3.ObjectUtils
-import sun.invoke.empty.Empty
-import kotlin.math.min
+import kotlin.Exception
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.reflect.jvm.internal.impl.load.java.typeEnhancement.NotNullTypeParameter
+import kotlin.system.exitProcess
 
 class BasicsFeatureSpec : FeatureSpec({
     feature("functions") {
@@ -146,12 +147,68 @@ class BasicsFeatureSpec : FeatureSpec({
         scenario("return min of 5") {
             minOf5(1.0, 2.0, 3.0, 4.0, 5.0) shouldBe 1.0
         }
-        scenario("minoff with collection") {
+        scenario("minOf with collection") {
             minOfList(list) shouldBe -1
         }
     }
 
-    // Write minOff function
+    //test of Home work #3, task 1
+    feature("Test minOf with vararg") {
+
+        scenario("3.1 expected type testing"){
+            minOfVarArg(0, 1, 2, 0).shouldBeTypeOf<Int>()
+        }
+
+        //Скорее всего в данном случае этот тест избыточный, так как тип Int,
+        // и kotlin самостоятельно берет только целую часть числа
+        scenario("3.1 list with not an integer element"){
+            minOfVarArg(9/2, 5, 10) shouldBe 4
+        }
+        scenario("3.1 random values") {
+            minOfVarArg(1, 8, -11234, 173, -4, 0, -3, 11234, -4, 34, 99) shouldBe (-11234)
+        }
+        scenario("3.1 test with two equal elements: + and - ") {
+            minOfVarArg(1, -1) shouldBe -1
+        }
+        scenario("3.1 with one element in list") {
+            minOfVarArg(1) shouldBe 1
+        }
+        scenario("3.1 test") {
+            minOfVarArg(0) shouldBe 0
+        }
+    }
+
+    //test Home work 3, task 2
+    feature("Test of day to realise"){
+        val featureForRealise = arrayListOf("registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment")
+        val featureForRealise2 = arrayListOf("registration")
+        val qa = QA("Ruslan", "QA department")
+        scenario("Type of result"){
+            qa.realiseTesting(18, featureForRealise).shouldBeTypeOf<Boolean>()
+        }
+        scenario("1 day to realise"){
+            qa.realiseTesting(1, featureForRealise) shouldBe false
+            println(qa.toString())
+        }
+        scenario("test days = count of features for realise"){
+            qa.realiseTesting(6, featureForRealise) shouldBe true
+        }
+        scenario("1 day and 1 feature to realise"){
+            qa.realiseTesting(1, featureForRealise2) shouldBe true
+        }
+        scenario("0 days to realise"){
+            qa.realiseTesting(0,featureForRealise2) shouldBe false
+        }
+        scenario("negative value"){
+            qa.realiseTesting(-10,featureForRealise) shouldBe false
+        }
+        scenario("Test in range 1..28") {
+            qa.realiseTesting(28, featureForRealise) shouldBe true
+        }
+        scenario("Println of params"){
+            println("Тесты разработал специалист из " + qa.department +" - "+ qa.name)
+        }
+    }
 
     feature("when expression") {
         describe(1) shouldBe "One"
@@ -214,10 +271,10 @@ fun minOf5(z: Double, x: Double, s: Double, d: Double, v: Double): Double {
 //Home work 1
 fun minOfList(list:List<Int>): Int {
     var mini = list[0]
-    for (i in list){
-        if (i < mini) {
-            mini = i
-        }
+    for (i in list) {
+         if (i < mini) {
+             mini = i
+         }
     }
     return mini
 }
@@ -257,4 +314,37 @@ fun count(list: ArrayList<String>): Int {
         counter += 1
     }
     return counter
+}
+
+//Home work 3, function for task 1
+fun minOfVarArg(vararg list:Int):Int  {
+    var mini = list[0]
+    for (i in list) {
+        if (i < mini) {
+            mini = i
+        }
+    }
+    return mini
+}
+
+
+// Home work 3, classes for task 2
+open class Engineer (val name: String, val department: String)
+
+class QA(name: String, department: String):Engineer(name, department){
+    override fun toString(): String {
+        return "My name is: " + this.name + ", im from department: " + this.department
+    }
+
+    @Throws(Exception::class)
+    fun realiseTesting(dayToRelease: Int, newFunc: ArrayList<String>): Boolean {
+        val tasksInDay = 2
+        val countTasks = newFunc.size
+        // Условие, что длительность спринта должна быть не более 28 дней
+        if (dayToRelease > 28) {
+            throw IllegalArgumentException("Длина спринта должна быть меньше 28 дней")
+        }
+        val tasksCompletedBeforeRelease = tasksInDay * dayToRelease
+        return countTasks <= tasksCompletedBeforeRelease
+    }
 }
