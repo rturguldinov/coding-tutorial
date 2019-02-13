@@ -1,4 +1,5 @@
 import com.sun.istack.internal.Nullable
+import com.sun.xml.internal.fastinfoset.stax.events.EmptyIterator
 import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException
 import io.kotlintest.*
 import io.kotlintest.matchers.collections.containNull
@@ -164,6 +165,9 @@ class BasicsFeatureSpec : FeatureSpec({
         scenario("3.1 list with not an integer element"){
             minOfVarArg(9/2, 5, 10) shouldBe 4
         }
+        scenario("Empty list"){
+            shouldThrow<Exception> { minOfVarArg() }
+        }
         scenario("3.1 random values") {
             minOfVarArg(1, 8, -11234, 173, -4, 0, -3, 11234, -4, 34, 99) shouldBe (-11234)
         }
@@ -182,6 +186,13 @@ class BasicsFeatureSpec : FeatureSpec({
     feature("Test of day to realise"){
         val featureForRealise = arrayListOf("registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment")
         val featureForRealise2 = arrayListOf("registration")
+
+        //57 задач для релиза
+        val featureCountOverMax = arrayListOf("registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile", "registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile", " LAST ELEMENT")
+
+        //56 задач для релиза
+        val maxCountOfTaskForRealise = arrayListOf("registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile", "registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile","registration", "Redesign", "add Button", "add New File", "Delete post", "Add comment", "Edit profile")
+
         val qa = QA("Ruslan", "QA department")
         scenario("Type of result"){
             qa.realiseTesting(18, featureForRealise).shouldBeTypeOf<Boolean>()
@@ -204,6 +215,15 @@ class BasicsFeatureSpec : FeatureSpec({
         }
         scenario("Test in range 1..28") {
             qa.realiseTesting(28, featureForRealise) shouldBe true
+        }
+        scenario("Test in range 1..30") {
+            shouldThrow<IllegalArgumentException> { qa.realiseTesting(29, featureForRealise) }
+        }
+        scenario("over max tasks for realise") {
+            qa.realiseTesting(28, featureCountOverMax) shouldBe false
+        }
+        scenario("Max count of tasks for Realise") {
+            qa.realiseTesting(28, maxCountOfTaskForRealise) shouldBe true
         }
         scenario("Println of params"){
             println("Тесты разработал специалист из " + qa.department +" - "+ qa.name)
@@ -317,7 +337,11 @@ fun count(list: ArrayList<String>): Int {
 }
 
 //Home work 3, function for task 1
+@Throws(IllegalArgumentException::class)
 fun minOfVarArg(vararg list:Int):Int  {
+    if (list.isEmpty()) {
+        throw IllegalArgumentException("Нет минимального элемента, так как лист путой")
+    }
     var mini = list[0]
     for (i in list) {
         if (i < mini) {
