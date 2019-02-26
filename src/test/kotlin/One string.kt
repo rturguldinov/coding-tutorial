@@ -12,44 +12,33 @@ class TestOfHomeWork: FeatureSpec({
         }
         scenario("positive test"){
             uniqueLetters("Human") shouldBe true
-            println()
         }
         scenario("Type of result") {
             uniqueLetters("Human").shouldBeTypeOf<Boolean>()
-            println()
-
         }
         scenario("Test with two words"){
             uniqueLetters("Hi, guys!") shouldBe true
-            println()
         }
         scenario("Test for false result"){
             uniqueLetters("Hello!") shouldBe false
-            println()
         }
         scenario("Empty string"){
             uniqueLetters("") shouldBe false
-            println()
         }
         scenario("String is Blank"){
             uniqueLetters(" ") shouldBe false
-            println()
         }
         scenario("Two words with different case"){
             uniqueLetters("Two tesla") shouldBe false
-            println()
         }
         scenario("String with few whitespace") {
             uniqueLetters("asd fgh jkl zxc") shouldBe true
-            println()
         }
         scenario("String with same punctuation marks"){
             uniqueLetters("!\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~!\"#\$%&'()*+,-./:;<=>?@[\\]^_`{|}~") shouldBe true
-            println()
-        }//
+        }
         scenario("String have equals digits") {
             uniqueLetters("33 and 223") shouldBe true
-            println()
         }
 
     }
